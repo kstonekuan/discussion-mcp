@@ -86,7 +86,7 @@ export class DiscussMCP extends McpAgent {
 				model: z
 					.string()
 					.optional()
-					.default("gemini-2.0-flash-001")
+					.default("gemini-2.5-flash")
 					.describe("The Gemini model to use"),
 				max_tokens: z
 					.number()

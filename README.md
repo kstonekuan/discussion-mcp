@@ -1,7 +1,7 @@
 # Discussion MCP Server
 
 <div align="center">
-  <img src="./images/logo.png" alt="Think MCP Logo" width="200">
+  <img src="./images/logo.png" alt="Discussion MCP Logo" width="200">
   
   An MCP (Model Context Protocol) server that provides thinking and discussion tools for AI assistants. Features a thinking tool to organize reasoning during complex tasks and a Gemini discussion tool for analyzing long texts. Built with TypeScript and deployable on Cloudflare Workers.
 </div>
@@ -9,7 +9,7 @@
 ## Features
 
 - 🧠 **Thinking Tool**: Helps AI assistants explicitly reason through complex problems
-- 💬 **Gemini Discussion Tool**: Enables extended conversations with Gemini API for long text analysis
+- 💬 **Gemini Discussion Tool**: Enables extended conversations with Gemini 2.5 API for long text analysis
 - 🚀 **Cloudflare Workers**: Runs serverless with global distribution
 - 🎯 **Dual Purpose**: Tools for both reasoning organization and extended text analysis
 - 🌐 **Dual Transport**: Supports both SSE and Streamable HTTP for maximum compatibility
@@ -22,7 +22,7 @@
 This server implements the MCP specification using Cloudflare's Agents SDK:
 - **GET /sse**: SSE endpoint for MCP communication
 - **POST /mcp**: Streamable HTTP endpoint for MCP communication
-- Built with TypeScript, MCP SDK, and Cloudflare Agents SDK
+- Built with TypeScript, MCP SDK, Cloudflare Agents SDK, and Google Gen AI SDK
 - Proper JSON-RPC 2.0 error handling
 - Node.js compatibility mode enabled
 
@@ -52,7 +52,7 @@ Based on [Anthropic's research](https://www.anthropic.com/engineering/claude-thi
 3. Configure Gemini API key for local development:
    ```bash
    cp .dev.vars.example .dev.vars
-   # Edit .dev.vars and add your Gemini API key
+   # Edit .dev.vars and add your Gemini API key from https://aistudio.google.com/app/apikey
    ```
 
 ### Deployment
@@ -78,10 +78,10 @@ Add the MCP server to Claude Code using the CLI via SSE transport:
 
 ```bash
 # For production deployment (SSE)
-claude mcp add think https://your-worker-name.workers.dev/sse -t sse
+claude mcp add discussion https://your-worker-name.workers.dev/sse -t sse
 
 # For local development
-claude mcp add think http://localhost:8787/sse -t sse
+claude mcp add discussion http://localhost:8787/sse -t sse
 ```
 
 You can verify the configuration with:
@@ -101,7 +101,7 @@ Once configured, Claude Code can use the think tool to organize its reasoning du
 **discuss_with_gemini**: Engage in extended discussion with Gemini API
 - `text` (required): The text content to discuss or analyze
 - `prompt` (required): The prompt or question for Gemini to process
-- `model` (optional): The Gemini model to use (default: gemini-1.5-flash)
+- `model` (optional): The Gemini model to use (default: gemini-2.5-flash)
 - `max_tokens` (optional): Maximum tokens in response (default: 8192)
 - `temperature` (optional): Temperature for response generation (0-1, default: 0.7)
 
@@ -126,7 +126,7 @@ await think({
 await discuss_with_gemini({
   text: "/* Very long document content here */",
   prompt: "Please provide a comprehensive summary of this document, highlighting the main points and key takeaways.",
-  model: "gemini-1.5-pro",
+  model: "gemini-2.5-pro",
   max_tokens: 4096
 })
 
@@ -222,7 +222,7 @@ Test the server:
 # Test SSE connection
 curl http://localhost:8787/sse
 
-# Test health endpoint
+# Test that server returns 404 for root
 curl http://localhost:8787/
 ```
 
@@ -241,6 +241,13 @@ According to Anthropic's research, the think tool provides:
 - **Protocol**: MCP (Model Context Protocol)
 - **Transport**: SSE and Streamable HTTP
 - **Observability**: Enabled for monitoring
+- **AI SDK**: Google Gen AI SDK (@google/genai) v1.6.0+
+- **Models**: Supports Gemini 2.5 models (gemini-2.5-flash, gemini-2.5-pro)
+
+## Important Notes
+
+### Google AI SDK Migration (2025)
+This project uses the new unified Google Gen AI SDK (`@google/genai`) which replaces the deprecated `@google/generative-ai` package. The legacy SDK will stop receiving support after August 31, 2025. This implementation uses the latest SDK with full support for Gemini 2.5 features.
 
 ## References
 
