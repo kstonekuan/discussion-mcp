@@ -1,14 +1,13 @@
-name = "think-mcp"
-main = "src/index.ts"
+name = "discussion-mcp"
 compatibility_date = "2025-03-10"
 compatibility_flags = ["nodejs_compat"]
 
 [[migrations]]
-new_sqlite_classes = ["ThinkMCP"]
+new_sqlite_classes = ["DiscussMCP"]
 tag = "v1"
 
 [[durable_objects.bindings]]
-class_name = "ThinkMCP"
+class_name = "DiscussMCP"
 name = "MCP_OBJECT"
 
 [observability]

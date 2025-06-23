@@ -1,19 +1,21 @@
-# Think MCP Server
+# Discussion MCP Server
 
 <div align="center">
   <img src="./images/logo.png" alt="Think MCP Logo" width="200">
   
-  An MCP (Model Context Protocol) server that provides a thinking tool for AI assistants to organize their reasoning during complex tasks. Built with TypeScript and deployable on Cloudflare Workers.
+  An MCP (Model Context Protocol) server that provides thinking and discussion tools for AI assistants. Features a thinking tool to organize reasoning during complex tasks and a Gemini discussion tool for analyzing long texts. Built with TypeScript and deployable on Cloudflare Workers.
 </div>
 
 ## Features
 
 - 🧠 **Thinking Tool**: Helps AI assistants explicitly reason through complex problems
+- 💬 **Gemini Discussion Tool**: Enables extended conversations with Gemini API for long text analysis
 - 🚀 **Cloudflare Workers**: Runs serverless with global distribution
-- 🎯 **Focused Purpose**: Single tool dedicated to improving AI reasoning
+- 🎯 **Dual Purpose**: Tools for both reasoning organization and extended text analysis
 - 🌐 **Dual Transport**: Supports both SSE and Streamable HTTP for maximum compatibility
 - 📦 **Simple Architecture**: Stateless design with minimal overhead
 - 🔍 **Transparent Reasoning**: Makes AI decision-making more observable
+- 📚 **Long Text Support**: Ideal for summarizing and analyzing extensive documents
 
 ## Architecture
 
@@ -47,14 +49,24 @@ Based on [Anthropic's research](https://www.anthropic.com/engineering/claude-thi
    ```bash
    pnpm install
    ```
+3. Configure Gemini API key for local development:
+   ```bash
+   cp .dev.vars.example .dev.vars
+   # Edit .dev.vars and add your Gemini API key
+   ```
 
 ### Deployment
 
-Deploy to Cloudflare Workers:
+1. Set up your Gemini API key:
+   ```bash
+   wrangler secret put GEMINI_API_KEY
+   ```
+   Enter your Gemini API key when prompted.
 
-```bash
-pnpm run deploy
-```
+2. Deploy to Cloudflare Workers:
+   ```bash
+   pnpm run deploy
+   ```
 
 **Alternative: Continuous Deployment**
 
@@ -81,10 +93,17 @@ claude mcp list
 
 Once configured, Claude Code can use the think tool to organize its reasoning during complex tasks.
 
-### Available Tool
+### Available Tools
 
 **think**: Record a thought during reasoning
 - `thought` (required): A thought to think about
+
+**discuss_with_gemini**: Engage in extended discussion with Gemini API
+- `text` (required): The text content to discuss or analyze
+- `prompt` (required): The prompt or question for Gemini to process
+- `model` (optional): The Gemini model to use (default: gemini-1.5-flash)
+- `max_tokens` (optional): Maximum tokens in response (default: 8192)
+- `temperature` (optional): Temperature for response generation (0-1, default: 0.7)
 
 Example usage:
 ```javascript
@@ -102,26 +121,54 @@ await think({
 await think({ 
   thought: "The user wants to optimize performance. I should first profile the code to identify bottlenecks rather than making assumptions about what needs optimization." 
 })
+
+// Analyzing a long document
+await discuss_with_gemini({
+  text: "/* Very long document content here */",
+  prompt: "Please provide a comprehensive summary of this document, highlighting the main points and key takeaways.",
+  model: "gemini-1.5-pro",
+  max_tokens: 4096
+})
+
+// Technical analysis with specific requirements
+await discuss_with_gemini({
+  text: "/* Complex technical specification */",
+  prompt: "Analyze this technical specification and identify potential implementation challenges, security concerns, and performance considerations.",
+  temperature: 0.3 // Lower temperature for more focused analysis
+})
 ```
 
-### When the Think Tool is Used
+### When the Tools are Used
 
-Claude Code will use the think tool when:
+**Think Tool** - Claude Code will use this when:
 - Working through complex multi-step problems
 - Analyzing tool outputs before making decisions
 - Following detailed policies or guidelines
 - Debugging challenging issues
 - Evaluating multiple solution approaches
 
+**Gemini Discussion Tool** - Claude Code will use this when:
+- Analyzing very long documents that exceed Claude's context window
+- Needing detailed summaries of extensive text
+- Requiring specialized analysis from Gemini models
+- Processing large technical documents or specifications
+- Generating comprehensive reports from lengthy content
+
 ### Example Scenarios
 
-The think tool improves performance in scenarios like:
-
+**Think tool** improves performance in scenarios like:
 1. **Software Engineering**: Breaking down complex refactoring tasks
 2. **Debugging**: Systematically analyzing error patterns
 3. **Architecture Design**: Evaluating trade-offs between different approaches
 4. **Code Review**: Organizing observations before providing feedback
 5. **Problem Solving**: Working through algorithmic challenges step-by-step
+
+**Gemini Discussion tool** excels at:
+1. **Document Analysis**: Summarizing lengthy technical documentation
+2. **Research Papers**: Extracting key findings from academic papers
+3. **Code Documentation**: Analyzing large codebases and their documentation
+4. **Legal/Contract Review**: Processing extensive legal documents
+5. **Log Analysis**: Examining large log files for patterns and issues
 
 ### CLAUDE.md Examples
 
