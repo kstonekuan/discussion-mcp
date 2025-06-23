@@ -5,6 +5,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpAgent } from "agents/mcp";
 import { z } from "zod";
 
+// Extend the Env interface to include the secret
+interface Env {
+	GEMINI_API_KEY: string;
+	MCP_OBJECT: DurableObjectNamespace;
+}
+
 // Helper function to interact with Gemini API
 async function discussWithGemini(
 	apiKey: string,
